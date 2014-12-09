@@ -1,0 +1,1 @@
+start c:\soft\node-webkit-v0.10.5-win-ia32\nw.exe .
