@@ -1,4 +1,5 @@
 var fs = require('fs');
+var globalSelectedId = '';
 
 function key_config_file() {
 	return "config/key.json";
@@ -35,16 +36,51 @@ function install_save_login_handler() {
 	});	
 }
 
+function update_sg_table_selected() {
+	$('#sg-table-body > tr').each(function() {
+		var tr = $(this);
+		tr.removeClass();
+		var id = tr[0].cells[0].innerText;
+		if (id == globalSelectedId) {
+			tr.addClass("info");
+		}
+	});
+}
+
+function install_row_click_handler() {
+	$('#sg-table-body').on('click', 'tr', function(e) {
+		var selectedId = e.currentTarget.cells[0].innerText;
+		globalSelectedId = selectedId;
+		update_sg_table_selected();
+	});
+}
+
 function reload_security_groups(ecs, region_id) {
-	ecs.describeSecurityGroups(region_id, 1, 10, function(json) {
+	install_row_click_handler();
+	ecs.describeSecurityGroups(region_id, 1, 50, function(json) {
+		console.log("loaded " + json.SecurityGroups.SecurityGroup.length + " security groups")
 		var tbody = $('#sg-table-body').html('');
 		$.each(json.SecurityGroups.SecurityGroup, function(index, sg) {
-			console.log(sg.SecurityGroupId);
-			tbody.append($('tr')
-				.append($('td')
+			tbody.append($('<tr>')
+				.append($('<td>')
 					.append(sg.SecurityGroupId))
-				.append($('td')
+				.append($('<td>')
 					.append(sg.Description))
+				.append($('<td>')
+					.append('<button type="button" class="btn btn-default btn-xs btn-edit-sg"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button> <button type="button" class="btn btn-default btn-xs btn-remove-sg"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>'))
+			);
+		});
+	});
+	ecs.describeSecurityGroups(region_id, 2, 50, function(json) {
+		console.log("loaded " + json.SecurityGroups.SecurityGroup.length + " security groups")
+		$.each(json.SecurityGroups.SecurityGroup, function(index, sg) {
+			tbody.append($('<tr>')
+				.append($('<td>')
+					.append(sg.SecurityGroupId))
+				.append($('<td>')
+					.append(sg.Description))
+				.append($('<td>')
+					.append('<button type="button" class="btn btn-default btn-xs btn-edit-sg"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button> <button type="button" class="btn btn-default btn-xs btn-remove-sg"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>'))
 			);
 		});
 	});
