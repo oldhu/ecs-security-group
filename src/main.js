@@ -12,7 +12,6 @@ function load_key_from_file() {
 		json = JSON.parse(str);
 		return json;
 	}
-	return;
 }
 
 function save_key_to_file(key) {
@@ -55,35 +54,52 @@ function install_row_click_handler() {
 	});
 }
 
+function install_row_action_handler() {
+	$('#sg-table-body').on('click', '.btn-edit-sg', function() {
+        var btn = $(this);
+        var btnId = btn[0].parentNode.parentNode.cells[0].innerText;
+        console.log(btnId);
+    });
+	$('#sg-table-body').on('click', '.btn-remove-sg', function() {
+
+	});	
+}
+
+function append_rows(json, tbody) {
+	$.each(json.SecurityGroups.SecurityGroup, function(index, sg) {
+		tbody.append($('<tr>')
+			.append($('<td>')
+				.append(sg.SecurityGroupId))
+			.append($('<td>')
+				.append(sg.Description))
+			.append($('<td>')
+                .append($('<button>').addClass('btn btn-default btn-xs btn-rules-sg')
+                    .append($('<span>').addClass("glyphicon glyphicon-th-list")))
+                    .append(' ')
+                .append($('<button>').addClass('btn btn-default btn-xs btn-ecs-sg')
+                    .append($('<span>').addClass("glyphicon glyphicon-ok")))
+                    .append(' ')
+				.append($('<button>').addClass('btn btn-default btn-xs btn-edit-sg')
+					.append($('<span>').addClass("glyphicon glyphicon-pencil")))
+                    .append(' ')
+				.append($('<button>').addClass('btn btn-default btn-xs btn-remove-sg')
+					.append($('<span>').addClass("glyphicon glyphicon-remove")))
+			)
+		);
+	});	
+}
+
+// support only 100 security groups now
 function reload_security_groups(ecs, region_id) {
 	install_row_click_handler();
-	ecs.describeSecurityGroups(region_id, 1, 50, function(json) {
-		console.log("loaded " + json.SecurityGroups.SecurityGroup.length + " security groups")
-		var tbody = $('#sg-table-body').html('');
-		$.each(json.SecurityGroups.SecurityGroup, function(index, sg) {
-			tbody.append($('<tr>')
-				.append($('<td>')
-					.append(sg.SecurityGroupId))
-				.append($('<td>')
-					.append(sg.Description))
-				.append($('<td>')
-					.append('<button type="button" class="btn btn-default btn-xs btn-edit-sg"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button> <button type="button" class="btn btn-default btn-xs btn-remove-sg"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>'))
-			);
-		});
-	});
-	ecs.describeSecurityGroups(region_id, 2, 50, function(json) {
-		console.log("loaded " + json.SecurityGroups.SecurityGroup.length + " security groups")
-		$.each(json.SecurityGroups.SecurityGroup, function(index, sg) {
-			tbody.append($('<tr>')
-				.append($('<td>')
-					.append(sg.SecurityGroupId))
-				.append($('<td>')
-					.append(sg.Description))
-				.append($('<td>')
-					.append('<button type="button" class="btn btn-default btn-xs btn-edit-sg"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button> <button type="button" class="btn btn-default btn-xs btn-remove-sg"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>'))
-			);
-		});
-	});
+	install_row_action_handler();
+	var tbody = $('#sg-table-body').html('');
+	for (var i = 0; i < 2; i++) {
+		ecs.describeSecurityGroups(region_id, i + 1, 50, function(json) {
+			console.log("loaded " + json.SecurityGroups.SecurityGroup.length + " security groups");
+			append_rows(json, tbody);
+		});		
+	}
 }
 
 function install_select_region_handler(ecs) {
