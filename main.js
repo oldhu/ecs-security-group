@@ -73,8 +73,8 @@ function install_row_click_handler() {
     });
 }
 
-function remove_sg(sgid, regionid) {
-    if (confirm("确认删除安全组" + sgid + "，位于" + regionid)) {
+function remove_sg(sgid, sgname, regionid) {
+    if (confirm("确认删除安全组" + sgid + "，" + sgname + "，位于" + regionid)) {
         getECS().deleteSecurityGroup(sgid, regionid, function(json) {
             if (json.Status) {
                 reload_security_groups();
@@ -89,8 +89,18 @@ function edit_sg(sgid, sgname, regionid) {
         'sgname': sgname,
         'regionid': regionid
     };
-    remote.getGlobal('sharedObject').sg_to_edit = sg_to_edit;
+    remote.getGlobal('sharedObject').sg = sg_to_edit;
     window.location.href = "editsg.html";
+}
+
+function show_rules(sgid, sgname, regionid) {
+    var sg = {
+        'sgid': sgid,
+        'sgname': sgname,
+        'regionid': regionid
+    };
+    remote.getGlobal('sharedObject').sg = sg;
+    window.location.href = "rules.html";
 }
 
 function install_row_action_handler() {
@@ -105,12 +115,15 @@ function install_row_action_handler() {
         var row = $($(this)[0].parentNode.parentNode);
         var sgid = row.data('sgid');
         var regionid = row.data('regionid');
-        remove_sg(sgid, regionid);
+        var sgname = row.data('sgname');
+        remove_sg(sgid, sgname, regionid);
     });
     $('#sg-table-body').on('click', '.btn-rules-sg', function () {
         var row = $($(this)[0].parentNode.parentNode);
         var sgid = row.data('sgid');
         var regionid = row.data('regionid');
+        var sgname = row.data('sgname');
+        show_rules(sgid, sgname, regionid);
     });
     $('#sg-table-body').on('click', '.btn-ecs-sg', function () {
         var row = $($(this)[0].parentNode.parentNode);
@@ -138,7 +151,7 @@ function append_rows(region_id, json, tbody) {
                     //.append(' ')
                     .append($('<button>').addClass('btn btn-default btn-xs btn-remove-sg')
                         .append($('<span>').addClass("glyphicon glyphicon-remove")))
-            );
+                );
         row.data('sgid', sg.SecurityGroupId);
         row.data('sgname', sg.Description);
         row.data('regionid', region_id);
@@ -180,7 +193,7 @@ function reload_regions() {
 
 function install_new_sg_handler() {
     $('#newsg-button').on('click', function() {
-        remote.getGlobal('sharedObject').sg_to_edit = null;
+        remote.getGlobal('sharedObject').sg = null;
         window.location.href = "editsg.html";
     });
 }

@@ -1,7 +1,7 @@
 var remote = require('remote');
 
 function load_sg_values() {
-    var sg_to_edit = remote.getGlobal('sharedObject').sg_to_edit;
+    var sg_to_edit = remote.getGlobal('sharedObject').sg;
     if (sg_to_edit == null) {
         $('#sgid').val("");
         $('#regionid').val(getRegion());

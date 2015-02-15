@@ -8,7 +8,10 @@ function load_editlogin_values() {
 
 function save_key_to_file(key) {
     var key_file = key_config_file();
-    fs.writeFileSync(key_file, JSON.stringify(key));
+    if (!fs.existsSync('config')) {
+        fs.mkdirSync('config');
+    }
+    fs.writeFileSync(key_file, JSON.stringify(key), 'UTF-8', {flags:'w+'});
 }
 
 function install_buttons_handler() {

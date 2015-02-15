@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <script>
+        window.$ = window.jQuery = require("./lib/jquery/jquery-1.11.0.min.js");
+    </script>
+    <script src="lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="main.js"></script>
+    <script src="editrule.js"></script>
+    <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="lib/bootstrap/css/custom.css" rel="stylesheet">
+    <title>创建基于IP的安全规则</title>
+</head>
+<body>
+<div class="container" id="content">
+    <div class="alert alert-warning" role="alert" id="message">Error Message</div>
+    <div class="row">
+        <div class="col-sm-8 col-md-8 col-md-offset-2 col-sm-offset-2">
+            <form role="form">
+                <div class="form-group">
+                    <label for="sgid">安全组ID</label>
+                    <input type="text" class="form-control" id="sgid" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="regionid">地域ID</label>
+                    <input type="text" class="form-control" id="regionid" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="protocol">协议</label>
+                    <select class="form-control" id="protocol">
+                        <option>TCP</option>
+                        <option>UDP</option>
+                        <option>ICMP</option>
+                        <option>GRE</option>
+                        <option>ALL</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="portrange">目标端口</label>
+                    <input type="text" class="form-control" id="portrange" placeholder="端口号范围，格式：端口号/端口号">
+                </div>
+                <div class="form-group">
+                    <label for="iprange">源IP地址</label>
+                    <input type="text" class="form-control" id="iprange" placeholder="源IP地址，格式：IP地址/掩码，0.0.0.0/0表示所有">
+                </div>
+                <div class="form-group">
+                    <label for="nictype">网络类型</label>
+                    <select class="form-control" id="nictype">
+                        <option value="intranet">内网</option>
+                        <option value="internet">互联网</option>
+                    </select>
+                </div>
+                <button type="button" class="btn btn-default" id="btnsave">保存</button>
+                <button type="button" class="btn btn-default" id="btncancel">取消</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script language="JavaScript">
+    $(document).ready(function () {
+        $("#message").hide();
+        install_protocol_change_handler();
+        install_buttons_handler();
+        load_sg_values();
+    })
+</script>
+</body>
+</html>
