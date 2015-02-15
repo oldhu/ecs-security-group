@@ -42,11 +42,12 @@ function getRegion() {
 }
 
 function key_config_file() {
-    return "config/key.json";
+    return __dirname + "/config/key.json";
 }
 
 function load_key_from_file() {
     var key_file = key_config_file();
+    console.log("loading config from " + key_file);
     if (fs.existsSync(key_file)) {
         var str = fs.readFileSync(key_file).toString();
         json = JSON.parse(str);

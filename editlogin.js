@@ -8,8 +8,9 @@ function load_editlogin_values() {
 
 function save_key_to_file(key) {
     var key_file = key_config_file();
-    if (!fs.existsSync('config')) {
-        fs.mkdirSync('config');
+    var configdir = __dirname + "/config"
+    if (!fs.existsSync(configdir)) {
+        fs.mkdirSync(configdir);
     }
     fs.writeFileSync(key_file, JSON.stringify(key), 'UTF-8', {flags:'w+'});
 }
