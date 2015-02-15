@@ -77,7 +77,7 @@ function remove_sg(sgid, sgname, regionid) {
     if (confirm("确认删除安全组" + sgid + "，" + sgname + "，位于" + regionid)) {
         getECS().deleteSecurityGroup(sgid, regionid, function(json) {
             if (json.Status) {
-                reload_security_groups();
+                window.location.href = "main.html";
             }
         })
     }
@@ -101,6 +101,16 @@ function show_rules(sgid, sgname, regionid) {
     };
     remote.getGlobal('sharedObject').sg = sg;
     window.location.href = "rules.html";
+}
+
+function select_ecs(sgid, sgname, regionid) {
+    var sg = {
+        'sgid': sgid,
+        'sgname': sgname,
+        'regionid': regionid
+    };
+    remote.getGlobal('sharedObject').sg = sg;
+    window.location.href = "ecs.html";
 }
 
 function install_row_action_handler() {
@@ -129,6 +139,8 @@ function install_row_action_handler() {
         var row = $($(this)[0].parentNode.parentNode);
         var sgid = row.data('sgid');
         var regionid = row.data('regionid');
+        var sgname = row.data('sgname');
+        select_ecs(sgid, sgname, regionid);
     });
 }
 
@@ -159,35 +171,43 @@ function append_rows(region_id, json, tbody) {
     });
 }
 
-// support only 100 security groups now
-function reload_security_groups() {
+function next_batch_groups(tbody, region_id, page) {
+    getECS().describeSecurityGroups(region_id, page, 50, function (json) {
+        console.log("loaded " + json.SecurityGroups.SecurityGroup.length + " security groups");
+        append_rows(region_id, json, tbody);
+        if (json.SecurityGroups.SecurityGroup.length == 50) {
+            next_batch_groups(tbody, region_id, page + 1);
+        }
+    });
+}
+
+function load_security_groups() {
     var region_id = getRegion();
     install_row_click_handler();
     install_row_action_handler();
     var tbody = $('#sg-table-body').html('');
-    for (var i = 0; i < 2; i++) {
-        getECS().describeSecurityGroups(region_id, i + 1, 50, function (json) {
-            console.log("loaded " + json.SecurityGroups.SecurityGroup.length + " security groups");
-            append_rows(region_id, json, tbody);
-        });
-    }
+    next_batch_groups(tbody, region_id, 1);
 }
 
 function install_select_region_handler() {
     $('#selectregion').on('change', function () {
         setRegion(this.value);
-        reload_security_groups();
+        window.location.href = "main.html";
     });
 }
 
-function reload_regions() {
+function load_regions() {
     getECS().describeRegions(function (json) {
         var select = $('#selectregion').children().remove().end();
         $.each(json.Regions.Region, function (index, region) {
             select.append($("<option>", {value: region.RegionId, html: region.LocalName}));
         });
-        setRegion(select.val());
-        reload_security_groups();
+        if (getRegion() == null) {
+            setRegion(select.val());
+        } else {
+            select.val(getRegion());
+        }
+        load_security_groups();
     });
 }
 

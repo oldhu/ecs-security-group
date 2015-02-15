@@ -20,11 +20,11 @@ function install_buttons_handler() {
             "id": $("#inputid").val(),
             "secret": $("#inputsecret").val()
         });
-        window.location.href = "index.html";
+        window.location.href = "main.html";
     });
 
     $('#btncancel').on('click', function () {
-        window.location.href = "index.html";
+        window.location.href = "main.html";
     });
 
 }

@@ -7,7 +7,7 @@
     </script>
     <script src="lib/bootstrap/js/bootstrap.min.js"></script>
     <script src="main.js"></script>
-    <script src="rules.js"></script>
+    <script src="ecs.js"></script>
     <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="lib/bootstrap/css/custom.css" rel="stylesheet">
     <link href="lib/font-awesome/css/font-awesome.css" rel="stylesheet">
@@ -18,31 +18,29 @@
     <div class="container-fluid">
         <i id="spinner" class="fa fa-plug"></i>
         <a type="button" class="btn btn-default navbar-btn" href="main.html">返回</a>
-        <a type="button" class="btn btn-default navbar-btn" href="editrule.html">新建基于IP的规则</a>
-        <a type="button" class="btn btn-default navbar-btn" href="editrulebysg.html">新建基于安全组的规则</a>
 </nav>
 <div class="container-fluid" id="content">
     <div class="alert alert-warning" role="alert" id="message">Error Message</div>
     <div class="alert alert-info" role="alert" id="sgname"></div>
-    <table class="table table-hover" id="rules-table">
+    <table class="table table-hover" id="ecs-table">
         <thead>
         <tr>
-            <th>协议</th>
-            <th>端口</th>
-            <th>源安全组</th>
-            <th>源IP</th>
-            <th>网络类型</th>
-            <th>操作</th>
+            <th>ID</th>
+            <th>可用区</th>
+            <th>公网IP地址</th>
+            <th>内网IP地址</th>
+            <th>描述</th>
+            <th>选中</th>
         </tr>
         </thead>
-        <tbody id="rules-table-body">
+        <tbody id="ecs-table-body">
         </tbody>
     </table>
 </div>
 <script language="JavaScript">
     $(document).ready(function () {
         $("#message").hide();
-        load_all_rules();
+        load_all_ecs();
     })
 </script>
 </body>
