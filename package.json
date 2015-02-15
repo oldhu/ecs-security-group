@@ -1,13 +1,5 @@
 {
   "name": "ECS Security Group Tool",
-  "main": "index.html",
-  "window": {
-    "title": "ECS安全组管理工具",
-    "width": 768,
-    "min_width": 768,
-    "max_width": 768,
-    "toolbar": true,
-    "position": "center",
-    "show": true
-  }
+  "version": "0.1.0",
+  "main": "index.js"
 }

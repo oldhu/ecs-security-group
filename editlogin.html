@@ -1,37 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <script src="lib/jquery/jquery-1.11.0.min.js"></script>
-  <script src="lib/bootstrap/js/bootstrap.min.js"></script>
-  <script src="src/main.js"></script>
-  <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="lib/bootstrap/css/custom.css" rel="stylesheet">
-  <title>修改认证信息</title>
+    <meta charset="utf-8">
+    <script>
+        window.$ = window.jQuery = require("./lib/jquery/jquery-1.11.0.min.js");
+    </script>
+    <script src="lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="main.js"></script>
+    <script src="editlogin.js"></script>
+    <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="lib/bootstrap/css/custom.css" rel="stylesheet">
+    <title>修改认证信息</title>
 </head>
 <body>
-  <div class="container">
+<div class="container" id="content">
     <div class="row">
-      <div class="col-sm-8 col-md-8 col-md-offset-2 col-sm-offset-2">
-        <form role="form">
-          <div class="form-group">
-            <label for="inputid">Key ID</label>
-            <input type="text" class="form-control" id="inputid" placeholder="输入Access Key ID">
-          </div>
-          <div class="form-group">
-            <label for="inputsecret">Key Secret</label>
-            <input type="text" class="form-control" id="inputsecret" placeholder="输入Access Key Secret">
-          </div>
-          <button type="button" class="btn btn-default" id="btnsavelogin">保存</button>
-        </form>
-      </div>
+        <div class="col-sm-8 col-md-8 col-md-offset-2 col-sm-offset-2">
+            <form role="form">
+                <div class="form-group">
+                    <label for="inputid">Key ID</label>
+                    <input type="text" class="form-control" id="inputid" placeholder="输入Access Key ID">
+                </div>
+                <div class="form-group">
+                    <label for="inputsecret">Key Secret</label>
+                    <input type="text" class="form-control" id="inputsecret" placeholder="输入Access Key Secret">
+                </div>
+                <button type="button" class="btn btn-default" id="btnsavelogin">保存</button>
+                <button type="button" class="btn btn-default" id="btncancel">取消</button>
+            </form>
+        </div>
     </div>
-  </div>
-  <script language="JavaScript">
-  $(document).ready(function() {
-    load_editlogin_values();
-    install_save_login_handler();
-  })
-  </script>
+</div>
+<script language="JavaScript">
+    $(document).ready(function () {
+        load_editlogin_values();
+        install_buttons_handler();
+    })
+</script>
 </body>
 </html>
