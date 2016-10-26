@@ -1,6 +1,6 @@
 function next_row(json, index, tbody) {
     var ecs = json.InstanceStatuses.InstanceStatus[index];
-    var row = $('<tr>').append($('<td>').append(ecs.InstanceId))
+    var row = $('<tr>').append($('<td>').append(ecs.InstanceId));
     var sg = remote.getGlobal('sharedObject').sg;
 
     row.data('instanceid', ecs.InstanceId);
@@ -29,7 +29,7 @@ function next_batch_ecs(tbody, regionid, page) {
         console.log("loaded " + json.InstanceStatuses.InstanceStatus.length + " ecs instances");
         next_row(json, 0, tbody);
         if (json.InstanceStatuses.InstanceStatus.length == 50) {
-            next_batch_ecs(tbody, region_id, page + 1);
+            next_batch_ecs(tbody, regionid, page + 1);
         }
     });
 }

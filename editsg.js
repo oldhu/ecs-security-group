@@ -17,12 +17,12 @@ function install_buttons_handler() {
         var sgname = $('#sgname').val();
         getECS().createSecurityGroup(regionId, sgname, function(json) {
             if (json.Status) {
-                window.location.href = "main.html";
+                window.location.href = "sg.html";
             }
         });
     });
 
     $('#btncancel').on('click', function () {
-        window.location.href = "main.html";
+        window.location.href = "sg.html";
     });
 }

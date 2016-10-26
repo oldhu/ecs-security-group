@@ -8,14 +8,18 @@ var globalECS = null;
 function getECS() {
     if (globalECS == null) {
         var key = remote.getGlobal('sharedObject').key;
-        var ecs = new ECS(key.id, key.secret);
+        var ecs = new ECS.ECS(key.id, key.secret);
+
+        globalECS = ecs;
 
         ecs.beforeRequest = function () {
             $('#spinner').removeClass().addClass("fa fa-spinner fa-spin");
         };
+        
         ecs.afterRequest = function () {
             $('#spinner').removeClass().addClass("fa fa-plug");
         };
+
         ecs.onMessage = function(status, msg) {
             var msgdiv = $('#message');
             if (status) {
@@ -27,8 +31,19 @@ function getECS() {
                     msgdiv.hide();
                 }, 4000);
             }
+        };
+
+        ecs.readCache = function(key) {
+            var cache = remote.getGlobal('sharedObject').cache;
+            if (key in cache) {
+                return cache[key];
+            }
         }
-        globalECS = ecs;
+
+        ecs.writeCache = function(key, value) {
+            console.log("writing " + key + ", " + value);
+            remote.getGlobal('sharedObject').cache[key] = value;
+        }
     }
     return globalECS;
 }
@@ -46,12 +61,15 @@ function key_config_file() {
 }
 
 function load_key_from_file() {
+    if (require('remote').getGlobal('sharedObject').key) {
+        return;
+    }
     var key_file = key_config_file();
     console.log("loading config from " + key_file);
     if (fs.existsSync(key_file)) {
         var str = fs.readFileSync(key_file).toString();
         json = JSON.parse(str);
-        return json;
+        require('remote').getGlobal('sharedObject').key = json;
     }
 }
 
@@ -68,8 +86,7 @@ function update_sg_table_selected() {
 
 function install_row_click_handler() {
     $('#sg-table-body').on('click', 'tr', function (e) {
-        var selectedId = e.currentTarget.cells[0].innerText;
-        globalSelectedId = selectedId;
+        globalSelectedId = e.currentTarget.cells[0].innerText;
         update_sg_table_selected();
     });
 }
@@ -78,39 +95,36 @@ function remove_sg(sgid, sgname, regionid) {
     if (confirm("确认删除安全组" + sgid + "，" + sgname + "，位于" + regionid)) {
         getECS().deleteSecurityGroup(sgid, regionid, function(json) {
             if (json.Status) {
-                window.location.href = "main.html";
+                window.location.href = "sg.html";
             }
         })
     }
 }
 
 function edit_sg(sgid, sgname, regionid) {
-    var sg_to_edit = {
+    remote.getGlobal('sharedObject').sg = {
         'sgid': sgid,
         'sgname': sgname,
         'regionid': regionid
     };
-    remote.getGlobal('sharedObject').sg = sg_to_edit;
     window.location.href = "editsg.html";
 }
 
 function show_rules(sgid, sgname, regionid) {
-    var sg = {
+    remote.getGlobal('sharedObject').sg = {
         'sgid': sgid,
         'sgname': sgname,
         'regionid': regionid
     };
-    remote.getGlobal('sharedObject').sg = sg;
     window.location.href = "rules.html";
 }
 
 function select_ecs(sgid, sgname, regionid) {
-    var sg = {
+    remote.getGlobal('sharedObject').sg = sg = {
         'sgid': sgid,
         'sgname': sgname,
         'regionid': regionid
     };
-    remote.getGlobal('sharedObject').sg = sg;
     window.location.href = "ecs.html";
 }
 
@@ -193,7 +207,7 @@ function load_security_groups() {
 function install_select_region_handler() {
     $('#selectregion').on('change', function () {
         setRegion(this.value);
-        window.location.href = "main.html";
+        window.location.href = "sg.html";
     });
 }
 

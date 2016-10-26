@@ -8,7 +8,7 @@ function load_editlogin_values() {
 
 function save_key_to_file(key) {
     var key_file = key_config_file();
-    var configdir = __dirname + "/config"
+    var configdir = __dirname + "/config";
     if (!fs.existsSync(configdir)) {
         fs.mkdirSync(configdir);
     }
@@ -21,11 +21,11 @@ function install_buttons_handler() {
             "id": $("#inputid").val(),
             "secret": $("#inputsecret").val()
         });
-        window.location.href = "main.html";
+        window.location.href = "sg.html";
     });
 
     $('#btncancel').on('click', function () {
-        window.location.href = "main.html";
+        window.location.href = "sg.html";
     });
 
 }
